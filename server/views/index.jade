@@ -1,11 +1,15 @@
 extends base
 
+block scripts
+    script(type="text/javascript", src="/scripts/matchthree.js")
+
 block content
     h1= title
     br
-    p Welcome to #{title}!
-    p Clone this repo and build yourself something wonderful
 
-block scripts
-    script(type="text/javascript", src="/scripts/example.js")
-
+    .container
+        #board.panel.panel-default
+            - for (var j = 0; j < 6; j++)
+              .row
+                - for (var i = 0; i < 6; i++)
+                  .cell(x=i, y=j) 0

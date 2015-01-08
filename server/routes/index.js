@@ -1,5 +1,5 @@
 exports.index = function (request, response) {
     'use strict';
-    var data = { title: 'Node Template' };
+    var data = { title: 'Match Three' };
     response.render('index', data);
 };

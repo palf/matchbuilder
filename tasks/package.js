@@ -4,7 +4,7 @@ var config = {
 
     all: {
         src: './src/main.js',
-        dest: './server/public/scripts/example.js'
+        dest: './server/public/scripts/matchthree.js'
     }
 };
 
