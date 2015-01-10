@@ -7,9 +7,12 @@ block content
     h1= title
     br
 
-    .container
+    #log 0
+
+    .container.game
         #board.panel.panel-default
             - for (var j = 0; j < 6; j++)
               .row
                 - for (var i = 0; i < 6; i++)
-                  .cell(x=i, y=j) 0
+                  .cell(x=i, y=j)
+                    .tile 0

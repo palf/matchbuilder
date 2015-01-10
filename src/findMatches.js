@@ -10,47 +10,32 @@ function asCells (puzzle, cellIDs) {
         return _.find(puzzle, function (cell) {
             return cell.id === cellID;
         });
-        return cellID;
     });
 }
 
-function getAllTraversals (ids, groups) {
+function getAllTraversals (groups, ids) {
     if (_.isEmpty(ids)) {
         return [];
 
     } else {
-        var id = _.first(ids)
-        var traversal = benchmark("traversal " + id, _.partial(getTraversal, groups, id));
-        // var traversal = getTraversal(groups, id);
+        var id = _.first(ids);
+        var traversal = getTraversal(groups, id);
         var remainder = _.difference(ids, traversal);
-
-        return [ traversal ].concat(getAllTraversals(remainder, groups));
+        return [ traversal ].concat(getAllTraversals(groups, remainder));
     }
 }
 
 function findMatches (puzzle) {
-    var pairs = benchmark("pairs", _.partial(getMatchingPairs, puzzle));
-    var groups = benchmark("group edges", _.partial(groupEdgesByOrigin, pairs));
+    var pairs = getMatchingPairs(puzzle);
+    var groups = groupEdgesByOrigin(pairs);
     var allIDs = _.pluck(puzzle, 'id');
 
-    var traversals = benchmark("all traversals", _.partial(getAllTraversals, allIDs, groups));
+    var traversals = getAllTraversals(groups, allIDs);
     var filtered = _.filter(traversals, function (t) {
         return t.length >= 3;
-    })
+    });
 
     return _.map(filtered, _.partial(asCells, puzzle));
 }
-
-
-
-function benchmark (label, func) {
-    var start = Date.now();
-    var result = func();
-    var finish = Date.now();
-    var time = finish - start;
-    console.log("(" + label + ") completed in: " + time + "ms");
-    return result;
-}
-
 
 module.exports = findMatches;

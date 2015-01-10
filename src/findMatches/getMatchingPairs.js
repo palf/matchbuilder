@@ -37,6 +37,10 @@ function describeAsPair (cell, neighbour) {
     return { origin: cell.id, target: neighbour.id };
 }
 
+function hasSameContent (cell, neighbour) {
+    return !!neighbour && neighbour.value === cell.value;
+}
+
 function getMatchingNeighbours (puzzle, cell) {
     var neighbours = getNeighbours(puzzle, cell);
     return _.chain(neighbours).
@@ -44,11 +48,6 @@ function getMatchingNeighbours (puzzle, cell) {
         map(_.partial(describeAsPair, cell)).
         value();
 }
-
-function hasSameContent (cell, neighbour) {
-    return !!neighbour && neighbour.value === cell.value;
-}
-
 
 function getMatchingPairs (puzzle) {
     return _.chain(puzzle).

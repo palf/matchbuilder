@@ -241,7 +241,7 @@ describe(".findMatches(puzzle)", function () {
             var result = benchmark('findMatches', function () {
                 findMatches(puzzle);
             });
-            expect(result.time).to.be.lessThan(16);
+            expect(result.time).to.be.lessThan(1);
         });
 
         var puzzle2 = puzzleOf([
@@ -254,7 +254,27 @@ describe(".findMatches(puzzle)", function () {
             var result = benchmark('findMatches', function () {
                 findMatches(puzzle2);
             });
-            expect(result.time).to.be.lessThan(16);
+            expect(result.time).to.be.lessThan(1);
+        });
+    });
+
+    describe.only("timing", function () {
+        var puzzle = puzzleOf([
+            [ 1, 1, 2, 0, 0, 0, 0, 0 ],
+            [ 4, 1, 2, 0, 0, 0, 0, 0 ],
+            [ 4, 3, 3, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 0, 0, 0 ]
+        ]);
+
+        it("returns a result within a frame", function () {
+            var result = benchmark('findMatches', function () {
+                findMatches(puzzle);
+            });
+            expect(result.time).to.be.lessThan(1);
         });
     });
 });

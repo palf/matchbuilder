@@ -9,8 +9,8 @@ function benchmark (func) {
     return { value: result, time: finish - start };
 }
 
-describe.only(".getTraversal(edgeGroups, cellID)", function () {
-    describe("when there are no edges", function () {
+describe(".getTraversal(edgeGroups, cellID)", function () {
+    describe("with no edges", function () {
         it("returns only the requested cell ID", function () {
             var result = getTraversal({}, 'a');
             expect(result).to.contain('a');
@@ -18,7 +18,7 @@ describe.only(".getTraversal(edgeGroups, cellID)", function () {
         });
     });
 
-    describe("when there is one edge", function () {
+    describe("with one edge", function () {
         it("returns a list of reachable cells from a given id", function () {
             var edges = {
                 a: [ 'b' ]
@@ -48,7 +48,7 @@ describe.only(".getTraversal(edgeGroups, cellID)", function () {
         });
     });
 
-    describe("when there are two disconnected edges", function () {
+    describe("with two disconnected edges", function () {
         it("does not include the disconnected edge in the traversable set", function () {
             var edges = {
                 a: [ 'b' ],
@@ -61,7 +61,7 @@ describe.only(".getTraversal(edgeGroups, cellID)", function () {
         });
     });
 
-    describe("when there is a chain of connected edges", function () {
+    describe("with a chain of connected edges", function () {
         it("traverses along the chain", function () {
             var edges = {
                 a: [ 'b' ],
@@ -114,7 +114,7 @@ describe.only(".getTraversal(edgeGroups, cellID)", function () {
         });
     });
 
-    describe("when there are connected edges from a common root", function () {
+    describe("with connected edges from a common root", function () {
         it("returns all reachable cells", function () {
             var edges = {
                 a: [ 'b', 'c', 'd' ]
@@ -129,11 +129,11 @@ describe.only(".getTraversal(edgeGroups, cellID)", function () {
         });
     });
 
-    describe("when there is a combination of connection types", function () {
+    describe("with a combination of connection types", function () {
         it("traverses both types in tandem", function () {
             var edges = {
                 a: [ 'b', 'c', 'd' ],
-                b: [ 'e' ],
+                b: [ 'a', 'e', 'd' ],
                 e: [ 'f' ]
             };
             var result = getTraversal(edges, 'a');
@@ -148,24 +148,67 @@ describe.only(".getTraversal(edgeGroups, cellID)", function () {
         });
     });
 
-    describe("timing", function () {
-
-        it("completes very damn quickly", function () {
+    describe("performance", function () {
+        it("completes a large grid in a under a millisecond", function () {
             var edges = {
-                a: [ 'a', 'b', 'c', 'd', 'e', 'f' ],
-                b: [ 'a', 'b', 'c', 'd', 'e', 'f' ],
-                c: [ 'a', 'b', 'c', 'd', 'e', 'f' ],
-                d: [ 'a', 'b', 'c', 'd', 'e', 'f' ],
-                e: [ 'a', 'b', 'c', 'd', 'e', 'f' ],
-                f: [ 'a', 'b', 'c', 'd', 'e', 'f' ],
+                a: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
+                b: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
+                c: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
+                d: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
+                e: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
+                f: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
+                g: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
+                h: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
+                i: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
             };
             var result = benchmark(function () {
                 return getTraversal(edges, 'a');
             });
 
-            console.log(result);
+            expect(result.time).to.be.lessThan(2);
+        });
 
-            expect(result.time).to.be.lessThan(7);
+        it("completes a long chain in under a millisecond", function () {
+            var edges = {
+                a: [ 'b' ],
+                b: [ 'c' ],
+                c: [ 'd' ],
+                d: [ 'e' ],
+                e: [ 'f' ],
+                f: [ 'g' ],
+                g: [ 'h' ],
+                h: [ 'i' ],
+                i: [ 'j' ],
+                j: [ 'k' ],
+                k: [ 'a' ],
+            };
+            var result = benchmark(function () {
+                return getTraversal(edges, 'a');
+            });
+
+            expect(result.time).to.be.lessThan(2);
+        });
+
+        it("completes a combination in under a millisecond", function () {
+            var edges = {
+                a: [ 'b', 'c' ],
+                b: [ 'c' ],
+                c: [ 'd', 'b' ],
+                d: [ ],
+                e: [ 'f' ],
+                f: [ 'g', 'k' ],
+                g: [ 'h', 'k', 'j', 'g', 'f' ],
+                h: [ 'i' ],
+                i: [ 'j' ],
+                j: [ 'k', 'f', 'd' ],
+                k: [ 'a' ],
+                l: [ 'l' ]
+            };
+            var result = benchmark(function () {
+                return getTraversal(edges, 'a');
+            });
+
+            expect(result.time).to.be.lessThan(2);
         });
     });
 });

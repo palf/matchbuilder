@@ -1,59 +1,74 @@
-var checkForMatches = require('./checkForMatches');
+var _ = require('../server/public/libs/underscore.js');
 
-function newMatchGame () {
-    return _.times(6, function (y) {
-        return _.times(6, function (x) {
-            return 0;
-        });
-    });
-}
+var render = require('./render');
+var actions = require('./actions');
+var getScore = require('./score');
+var Puzzle = require('./puzzle');
 
-
-
-function selectCell (puzzle, x, y) {
-    var value = puzzle[y][x];
-    if (value === 0) {
-        puzzle[y][x] = 1;
-    }
-    checkForMatches(puzzle);
-}
-
-
-function render (puzzle) {
-    var elements = $('.cell');
-    _.each(puzzle, function (row, y) {
-        _.each(row, function (value, x) {
-            var i = x + 6 * y;
-            var element = elements[i];
-            $(element).html(value);
-        });
-    });
-}
 
 
 function bindInput (puzzle) {
-    var elements = $('.cell');
-    _.each(elements, function (element, index) {
-        var x = index % 6;
-        var y = Math.floor(index / 6);
+    var elements = $('.tile');
+    var board = document.getElementById('board');
+    var hammertime = new Hammer(board);
 
-        $(element).click(function () {
-            selectCell(puzzle, x, y);
-        });
+    hammertime.on('tap', function(ev) {
+        var index = _.indexOf(elements, ev.target);
+        if (index > -1) {
+            actions.selectCell(puzzle, index);
+        }
     });
 }
+
+
+function selectRandomEmpty (puzzle) {
+    var empties = _.filter(puzzle, Puzzle.isEmpty);
+
+    if (_.isEmpty(empties)) {
+        return null;
+    } else {
+        var i = _.random(0, empties.length - 1);
+        return _.indexOf(puzzle, empties[i]);
+    }
+}
+
 
 
 $(document).ready(function () {
     "use strict";
 
-    var puzzle = newMatchGame();
+    var puzzle = Puzzle.newPuzzle();
     bindInput(puzzle);
 
-    selectCell(puzzle, 0, 0);
-    selectCell(puzzle, 1, 0);
-    // selectCell(puzzle, 2, 0);
+    actions.setCell(puzzle, 0, 1);
+    actions.setCell(puzzle, 1, 1);
+    actions.setCell(puzzle, 2, 2);
+    actions.setCell(puzzle, 8, 2);
+    actions.setCell(puzzle, 14, 4);
+    actions.setCell(puzzle, 13, 4);
+    actions.setCell(puzzle, 12, 8);
+    actions.setCell(puzzle, 6, 8);
 
-    render(puzzle);
+    (function animloop() {
+        render(puzzle);
+        requestAnimationFrame(animloop);
+    })();
+
+    function auto () {
+        var v = setInterval(function () {
+            var index = selectRandomEmpty(puzzle);
+            if (index === null) {
+                console.log('clear');
+                console.log('score:', getScore(puzzle));
+                clearInterval(v);
+            } else {
+                console.log('picking:', index);
+                actions.selectCell(puzzle, index);
+            }
+        }, 32);
+    }
+
+    window.auto = auto;
+    window.puzzle = puzzle;
 });
 

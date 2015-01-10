@@ -1,46 +1,32 @@
 var _ = require('../../server/public/libs/underscore.js');
 
-var i = 0;
-function reachableNeighbours (groups, cellID) {
-
-    console.log(i, cellID)
-    i++
-
-
-
-    var traversableEdges = groups[cellID];
-    var otherEdges = _.omit(groups, cellID);
-
-    console.log(traversableEdges);
-    console.log(otherEdges);
-
-
-    return _.map(traversableEdges, function (cell) {
-        return getTraversal(otherEdges, cell);
-    });
+function getNeighbours (groups, id) {
+    return groups[id] || [];
 }
 
-function getTraversal (groups, cellID) {
-    if (_.isEmpty(groups)) {
-        return [ cellID ];
+
+function getTraversalDeep (groups, visited, pending) {
+    if (_.isEmpty(pending)) {
+        return visited;
     }
-    var x = _.flatten([
-        cellID,
-        reachableNeighbours(groups, cellID)
-    ]);
 
-    // var x = [cellID].concat()
+    var next = _.first(pending);
 
-    return _.uniq(x);
+    if (_.contains(visited, next)) {
+        return visited;
+    }
+
+    var neighbours = getNeighbours(groups, next);
+
+    var newVisited = visited.concat(next);
+    var misc = _.union(pending, neighbours);
+    var newPending = _.difference(misc, newVisited);
+
+    return getTraversalDeep(groups, newVisited, newPending);
+}
+
+function getTraversal (groups, id) {
+    return getTraversalDeep(groups, [ id ], getNeighbours(groups, id) );
 }
 
 module.exports = getTraversal;
-
-function benchmark (func, label) {
-    var start = Date.now();
-    var result = func();
-    var finish = Date.now();
-    var duration = finish - start;
-    if (label) { console.log("(" + label + ") completed in " + duration + "ms")}
-    return { value: result, time: duration };
-}
