@@ -10,7 +10,7 @@
     "trailing": true,
     "maxparams": 3,
     "maxdepth": 2,
-    "maxlen": 80,
+    "maxlen": 120,
 
     "bitwise": true,
     "freeze": true,

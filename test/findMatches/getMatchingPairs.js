@@ -1,6 +1,8 @@
 var expect = require('expect.js');
 var _ = require('../../server/public/libs/underscore.js');
 
+var getMatchingPairs = require('../../src/findMatches/getMatchingPairs');
+
 expect.Assertion.prototype.containMatch = function (expected) {
     var matches = _.filter(this.obj, function (content) {
         return expect.eql(content, expected);
@@ -14,9 +16,6 @@ expect.Assertion.prototype.containMatch = function (expected) {
 
     return this;
 };
-
-var getPairs = require('../../src/findMatches/getPairs');
-
 
 function puzzleOf (values) {
     return _.chain(values).
@@ -38,12 +37,12 @@ var a = {},
     b = {},
     c = {};
 
-describe(".getPairs(puzzle)", function () {
+describe(".getMatchingPairs(puzzle)", function () {
     describe("when the puzzle is empty", function () {
         var puzzle = puzzleOf([]);
 
         it("returns an empty array", function () {
-            var result = getPairs(puzzle);
+            var result = getMatchingPairs(puzzle);
             expect(result).to.be.empty();
         });
     });
@@ -56,7 +55,7 @@ describe(".getPairs(puzzle)", function () {
         ]);
 
         it("returns no matches", function () {
-            var result = getPairs(puzzle);
+            var result = getMatchingPairs(puzzle);
             expect(result).to.be.empty();
         });
     });
@@ -69,15 +68,19 @@ describe(".getPairs(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = getPairs(puzzle);
-            expect(result).to.have.length(1);
+            var result = getMatchingPairs(puzzle);
+            expect(result).to.have.length(2);
         });
 
         it("returns pairs as an origin and a target", function () {
-            var result = getPairs(puzzle);
+            var result = getMatchingPairs(puzzle);
             expect(result).to.containMatch({
-                origin: puzzle[0],
-                target: puzzle[1]
+                origin: puzzle[0].id,
+                target: puzzle[1].id
+            });
+            expect(result).to.containMatch({
+                origin: puzzle[1].id,
+                target: puzzle[0].id
             });
         });
     });
@@ -90,15 +93,19 @@ describe(".getPairs(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = getPairs(puzzle);
-            expect(result).to.have.length(1);
+            var result = getMatchingPairs(puzzle);
+            expect(result).to.have.length(2);
         });
 
         it("returns pairs as an origin and a target", function () {
-            var result = getPairs(puzzle);
+            var result = getMatchingPairs(puzzle);
             expect(result).to.containMatch({
-                origin: puzzle[0],
-                target: puzzle[3]
+                origin: puzzle[0].id,
+                target: puzzle[3].id
+            });
+            expect(result).to.containMatch({
+                origin: puzzle[3].id,
+                target: puzzle[0].id
             });
         });
     });
@@ -111,19 +118,27 @@ describe(".getPairs(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = getPairs(puzzle);
-            expect(result).to.have.length(2);
+            var result = getMatchingPairs(puzzle);
+            expect(result).to.have.length(4);
         });
 
         it("returns pairs as an origin and a target", function () {
-            var result = getPairs(puzzle);
+            var result = getMatchingPairs(puzzle);
             expect(result).to.containMatch({
-                origin: puzzle[0],
-                target: puzzle[1]
+                origin: puzzle[0].id,
+                target: puzzle[1].id
             });
             expect(result).to.containMatch({
-                origin: puzzle[7],
-                target: puzzle[8]
+                origin: puzzle[7].id,
+                target: puzzle[8].id
+            });
+            expect(result).to.containMatch({
+                origin: puzzle[1].id,
+                target: puzzle[0].id
+            });
+            expect(result).to.containMatch({
+                origin: puzzle[8].id,
+                target: puzzle[7].id
             });
         });
     });
@@ -136,19 +151,27 @@ describe(".getPairs(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = getPairs(puzzle);
-            expect(result).to.have.length(2);
+            var result = getMatchingPairs(puzzle);
+            expect(result).to.have.length(4);
         });
 
         it("returns pairs as an origin and a target", function () {
-            var result = getPairs(puzzle);
+            var result = getMatchingPairs(puzzle);
             expect(result).to.containMatch({
-                origin: puzzle[0],
-                target: puzzle[3]
+                origin: puzzle[0].id,
+                target: puzzle[3].id
             });
             expect(result).to.containMatch({
-                origin: puzzle[5],
-                target: puzzle[8]
+                origin: puzzle[5].id,
+                target: puzzle[8].id
+            });
+            expect(result).to.containMatch({
+                origin: puzzle[3].id,
+                target: puzzle[0].id
+            });
+            expect(result).to.containMatch({
+                origin: puzzle[8].id,
+                target: puzzle[5].id
             });
         });
     });
@@ -161,27 +184,35 @@ describe(".getPairs(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = getPairs(puzzle);
-            expect(result).to.have.length(3);
+            var result = getMatchingPairs(puzzle);
+            expect(result).to.have.length(6);
         });
 
         it("returns pairs as an origin and a target", function () {
-            var result = getPairs(puzzle);
+            var result = getMatchingPairs(puzzle);
             expect(result).to.containMatch({
-                origin: puzzle[0],
-                target: puzzle[3]
+                origin: puzzle[0].id,
+                target: puzzle[3].id
             });
             expect(result).to.containMatch({
-                origin: puzzle[1],
-                target: puzzle[2]
+                origin: puzzle[1].id,
+                target: puzzle[2].id
             });
             expect(result).to.containMatch({
-                origin: puzzle[4],
-                target: puzzle[7]
+                origin: puzzle[4].id,
+                target: puzzle[7].id
             });
-            expect(result).to.not.containMatch({
-                origin: puzzle[0],
-                target: puzzle[1]
+            expect(result).to.containMatch({
+                origin: puzzle[3].id,
+                target: puzzle[0].id
+            });
+            expect(result).to.containMatch({
+                origin: puzzle[2].id,
+                target: puzzle[1].id
+            });
+            expect(result).to.containMatch({
+                origin: puzzle[7].id,
+                target: puzzle[4].id
             });
         });
     });
@@ -194,23 +225,35 @@ describe(".getPairs(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = getPairs(puzzle);
-            expect(result).to.have.length(3);
+            var result = getMatchingPairs(puzzle);
+            expect(result).to.have.length(6);
         });
 
         it("returns pairs as an origin and a target", function () {
-            var result = getPairs(puzzle);
+            var result = getMatchingPairs(puzzle);
             expect(result).to.containMatch({
-                origin: puzzle[0],
-                target: puzzle[1]
+                origin: puzzle[0].id,
+                target: puzzle[1].id
             });
             expect(result).to.containMatch({
-                origin: puzzle[1],
-                target: puzzle[4]
+                origin: puzzle[1].id,
+                target: puzzle[4].id
             });
             expect(result).to.containMatch({
-                origin: puzzle[4],
-                target: puzzle[5]
+                origin: puzzle[4].id,
+                target: puzzle[5].id
+            });
+            expect(result).to.containMatch({
+                origin: puzzle[1].id,
+                target: puzzle[0].id
+            });
+            expect(result).to.containMatch({
+                origin: puzzle[4].id,
+                target: puzzle[1].id
+            });
+            expect(result).to.containMatch({
+                origin: puzzle[5].id,
+                target: puzzle[4].id
             });
         });
     });
@@ -223,15 +266,19 @@ describe(".getPairs(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = getPairs(puzzle);
-            expect(result).to.have.length(1);
+            var result = getMatchingPairs(puzzle);
+            expect(result).to.have.length(2);
         });
 
         it("returns pairs as an origin and a target", function () {
-            var result = getPairs(puzzle);
+            var result = getMatchingPairs(puzzle);
             expect(result).to.containMatch({
-                origin: puzzle[3],
-                target: puzzle[4]
+                origin: puzzle[3].id,
+                target: puzzle[4].id
+            });
+            expect(result).to.containMatch({
+                origin: puzzle[4].id,
+                target: puzzle[3].id
             });
         });
     });
@@ -244,7 +291,7 @@ describe(".getPairs(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = getPairs(puzzle);
+            var result = getMatchingPairs(puzzle);
             expect(result).to.have.length(0);
         });
     });
