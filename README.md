@@ -4,7 +4,7 @@ A match-building playground, where you build matches on a grid to construct high
 
 Seen in Triple Town and that game with the yetis.
 
-Demo version [here](http://example.com/ "Match Builder").
+Live version [here](http://palf-matchbuilder.herokuapp.com/ "Match Builder").
 
 
 ## Setup
