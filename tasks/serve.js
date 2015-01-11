@@ -4,6 +4,13 @@ var config = {
 
     all: {
         options: {
+            script: 'server/start.js',
+            background: false
+        }
+    },
+
+    reload: {
+        options: {
             script: 'server/start.js'
             // background: false
         }

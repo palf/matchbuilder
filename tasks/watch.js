@@ -21,7 +21,7 @@ var config = {
             'server/*.js',
             'server/routes/*.js'
         ],
-        tasks:  [ 'serve' ],
+        tasks:  [ 'serve:reload' ],
         options: {
             spawn: false
         }
