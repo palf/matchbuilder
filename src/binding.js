@@ -16,7 +16,6 @@ function bindInput (puzzle) {
         var hammer = new Hammer(element);
         hammer.on('tap', function (ev) {
             ev.preventDefault();
-            console.log(ev)
             actions.promoteAndMatch(puzzle, id);
             requestRender(elementMapping, puzzle.values);
         });

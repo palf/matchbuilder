@@ -16,7 +16,6 @@ function updateMatchedCells (values, matches, id) {
 function promoteAndMatch (puzzle, id) {
     Puzzle.promote(puzzle.values, id);
     var matches = findMatches(puzzle, id);
-    // console.log('matches', matches);
 
     var limit = 10;
     while (matches.length > 0 && limit > 0) {
