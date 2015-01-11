@@ -5,12 +5,18 @@ block scripts
 
 block content
     h1= title
-    br
 
     .container.game
-        #board.panel.panel-default
+        #board
             - for (var j = 0; j < 6; j++)
               .row
                 - for (var i = 0; i < 6; i++)
                   .cell
                     .tile 0
+
+    br
+    .instructions
+        h3 Instructions
+        p This is a playground; the only goal is to build the highest value tile you can
+        p Tap or click an empty tile to increase it; match three or more tiles to merge them (and score points!)
+        p Matches can be in any shape, so long as they touch horizontally or vertically (no diagonals!)

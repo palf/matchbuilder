@@ -23,21 +23,7 @@ $(document).ready(function () {
 
     var puzzle = Puzzle.newPuzzle();
 
-    actions.setCell(puzzle, 0, 1);
-    actions.setCell(puzzle, 1, 1);
-    actions.setCell(puzzle, 2, 2);
-    actions.setCell(puzzle, 8, 2);
-    actions.setCell(puzzle, 14, 4);
-    actions.setCell(puzzle, 13, 4);
-    actions.setCell(puzzle, 12, 8);
-    actions.setCell(puzzle, 6, 8);
-
     bindInput(puzzle);
-
-    // (function animloop() {
-    //     render(puzzle);
-    //     requestAnimationFrame(animloop);
-    // })();
 
     window.auto = auto;
     window.puzzle = puzzle;

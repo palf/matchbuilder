@@ -23,46 +23,47 @@ a {
 }
 
 .game {
-    padding: 15px;
+    padding: 10px;
     background: #bbada0;
     border-radius: 6px;
-    width: 464px;
-    height: 464px;
+    width: 440px;
+}
+
+.instructions {
+    width: 420px;
+    margin: auto;
+    padding: 10px;
 }
 
 #board {
-    margin-bottom: 0;
+    margin: 0;
+    background: #ffffff;
+    border-radius: 4px
 }
 
 .row {
-    margin-top: 10px;
-    margin-left: 10px;
-}
-
-.row:last-child {
-    margin-bottom: 10px;
+    margin: 0;
+    padding: 0;
 }
 
 .cell {
-    width: 60px;
-    height: 60px;
-    margin-right: 10px;
+    width: 70px;
+    height: 70px;
+    margin: 0;
     float: left;
-    border-radius: 3px;
+    padding: 5px;
     background: rgb(238, 228, 218);
     background: rgba(238, 228, 218, 0.35);
 }
 
-.cell:last-child {
-    margin-right: 0;
-}
-
 .tile {
+    width: 60px;
+    height: 60px;
     position: relative;
     line-height: 60px;
     margin: auto;
     border-radius: 3px;
-    background: #eee4da;
+    background: #f3ece7;
     text-align: center;
     font-weight: bold;
     cursor: pointer;
@@ -74,7 +75,7 @@ a {
 .value_0 { }
 
 .value_1 {
-    background: #ede0c8;
+    background: #f0e0c8;
 }
 
 .value_2 {
@@ -95,21 +96,3 @@ a {
     color: #f9f6f2;
     background: #f65e3b;
 }
-
-
-/*
-color: #f9f6f2;
-
-    background: #eee4da;
-    background: #ede0c8;
-    background: #f2b179;
-    background: #f59563;
-    background: #f67c5f;
-    background: #f65e3b;
-    background: #edcf72;
-    background: #edcc61;
-    background: #edc850;
-    background: #edc53f;
-    background: #edc22e;
-    background: #3c3a32;
-*/

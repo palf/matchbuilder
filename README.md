@@ -1,6 +1,11 @@
-# Node Template
+# Match Builder
 
-A template for websites built on Node and Express
+A match-building playground, where you build matches on a grid to construct higher value cells.
+
+Seen in Triple Town and that game with the yetis.
+
+Demo version [here](http://example.com/ "Match Builder").
+
 
 ## Setup
 
