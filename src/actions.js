@@ -1,8 +1,8 @@
 var _ = require('../server/public/libs/underscore.js');
 var Puzzle = require('./puzzle');
-var findMatches = require('./findMatches');
+var findMatches = require('./findMatches').byIndex;
 
-function updateMatches (matches, origin) {
+function updateMatchedCells (matches, origin) {
     _.each(matches, function (match) {
         _.each(match, function (matchCell) {
             if (matchCell === origin) {
@@ -14,18 +14,17 @@ function updateMatches (matches, origin) {
     });
 }
 
-function selectCell (puzzle, index) {
-    var start = Date.now();
+function promoteAndMatch (puzzle, index) {
     var cell = puzzle[index];
     var updated = Puzzle.promote(cell);
     if (updated) {
         var matches = findMatches(puzzle, index);
         while (!_.isEmpty(matches)) {
-            updateMatches(matches, cell);
+            updateMatchedCells(matches, cell);
             matches = findMatches(puzzle, index);
         }
     }
-    console.log(Date.now() - start);
+    return updated;
 }
 
 function setCell(puzzle, index, value) {
@@ -35,6 +34,6 @@ function setCell(puzzle, index, value) {
 
 
 module.exports = {
-    selectCell: selectCell,
+    promoteAndMatch: promoteAndMatch,
     setCell: setCell
 };

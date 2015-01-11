@@ -6,18 +6,33 @@ var getScore = require('./score');
 var Puzzle = require('./puzzle');
 
 
+var store;
+function mark (label) {
+    store = {
+        name: label,
+        time: Date.now()
+    };
+}
+
+function recall () {
+    var diff = Date.now() - store.time;
+    // console.log(store.name);
+    $('#log').html(diff + 'ms');
+}
 
 function bindInput (puzzle) {
     var elements = $('.tile');
-    var board = document.getElementById('board');
-    var hammertime = new Hammer(board);
+    // var board = document.getElementById('board');
+    // var hammertime = new Hammer(board);
 
-    hammertime.on('tap', function(ev) {
-        var index = _.indexOf(elements, ev.target);
-        if (index > -1) {
-            actions.selectCell(puzzle, index);
-        }
-    });
+    _.each(elements, function (el, index) {
+        var hammer = new Hammer(el);
+        hammer.on('tap', function () {
+            mark(index);
+            actions.promoteAndMatch(puzzle, index);
+            recall();
+        });
+    })
 }
 
 
@@ -58,12 +73,9 @@ $(document).ready(function () {
         var v = setInterval(function () {
             var index = selectRandomEmpty(puzzle);
             if (index === null) {
-                console.log('clear');
-                console.log('score:', getScore(puzzle));
                 clearInterval(v);
             } else {
-                console.log('picking:', index);
-                actions.selectCell(puzzle, index);
+                actions.promoteAndMatch(puzzle, index);
             }
         }, 32);
     }

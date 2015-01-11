@@ -1,7 +1,7 @@
 var expect = require('expect.js');
 var _ = require('../server/public/libs/underscore.js');
 
-var findMatches = require('../src/findMatches').all;
+var actions = require('../src/actions');
 
 function benchmark (label, func) {
     var start = Date.now();
@@ -28,12 +28,12 @@ function puzzleOf (values) {
 }
 
 
-describe(".findMatches(puzzle)", function () {
+describe(".promoteAndMatch(puzzle, index)", function () {
     var puzzle = puzzleOf([]);
 
     describe("when the puzzle is empty", function () {
         it("returns an empty array", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             expect(result).to.be.empty();
         });
     });
@@ -46,7 +46,7 @@ describe(".findMatches(puzzle)", function () {
         ]);
 
         it("returns no matches", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             expect(result).to.be.empty();
         });
     });
@@ -59,12 +59,12 @@ describe(".findMatches(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             expect(result).to.have.length(1);
         });
 
         it("returns the matching elements as a set", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             var expectResultTo = expect(result[0]).to;
             expectResultTo.contain(puzzle[0]);
             expectResultTo.contain(puzzle[1]);
@@ -81,12 +81,12 @@ describe(".findMatches(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             expect(result).to.have.length(1);
         });
 
         it("returns the matching elements as a set", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             var expectResultTo = expect(result[0]).to;
             expectResultTo.contain(puzzle[0]);
             expectResultTo.contain(puzzle[3]);
@@ -105,12 +105,12 @@ describe(".findMatches(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             expect(result).to.have.length(1);
         });
 
         it("returns the matching elements as a set", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             var expectResultTo = expect(result[0]).to;
             expectResultTo.contain(puzzle[0]);
             expectResultTo.contain(puzzle[1]);
@@ -131,12 +131,12 @@ describe(".findMatches(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             expect(result).to.have.length(1);
         });
 
         it("returns the matching elements as a set", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             var expectResultTo = expect(result[0]).to;
             expectResultTo.contain(puzzle[0]);
             expectResultTo.contain(puzzle[5]);
@@ -157,12 +157,12 @@ describe(".findMatches(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             expect(result).to.have.length(1);
         });
 
         it("returns the matching elements as a set", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             var expectResultTo = expect(result[0]).to;
             expectResultTo.contain(puzzle[2]);
             expectResultTo.contain(puzzle[7]);
@@ -188,12 +188,12 @@ describe(".findMatches(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             expect(result).to.have.length(4);
         });
 
         it("returns the matching elements as a set", function () {
-            var result = findMatches(puzzle);
+            var result = actions.promoteAndMatch(puzzle, 0);
             var firstResultShould = expect(result[0]).to;
             firstResultShould.contain(puzzle[2]);
             firstResultShould.contain(puzzle[3]);
@@ -238,8 +238,8 @@ describe(".findMatches(puzzle)", function () {
         ]);
 
         it("returns a result within a frame", function () {
-            var result = benchmark('findMatches', function () {
-                findMatches(puzzle);
+            var result = benchmark('promote & match', function () {
+                actions.promoteAndMatch(puzzle, 0);
             });
             expect(result.time).to.be.lessThan(16);
         });
@@ -251,17 +251,17 @@ describe(".findMatches(puzzle)", function () {
         ]);
 
         it("returns a result within a frame", function () {
-            var result = benchmark('findMatches', function () {
-                findMatches(puzzle2);
+            var result = benchmark('promote & match', function () {
+                actions.promoteAndMatch(puzzle, 0);
             });
             expect(result.time).to.be.lessThan(16);
         });
     });
 
-    describe("timing", function () {
+    describe.only("timing", function () {
         var puzzle = puzzleOf([
             [ 1, 1, 2, 0, 0, 0, 0, 0 ],
-            [ 4, 1, 2, 0, 0, 0, 0, 0 ],
+            [ 4, 0, 2, 0, 0, 0, 0, 0 ],
             [ 4, 3, 3, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -271,10 +271,11 @@ describe(".findMatches(puzzle)", function () {
         ]);
 
         it("returns a result within a frame", function () {
-            var result = benchmark('findMatches', function () {
-                findMatches(puzzle);
+            var result = benchmark('promote & match', function () {
+                return actions.promoteAndMatch(puzzle, 9);
             });
-            expect(result.time).to.be.lessThan(16);
+            expect(result).to.be.lessThan(16);
+            expect(result.time).to.be.lessThan(1);
         });
     });
 });
