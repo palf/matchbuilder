@@ -1,16 +1,17 @@
 var Puzzle = require('./puzzle');
 var getTraversal = require('./getTraversal');
 
-function findMatches (paths, values, id) {
-    if (values[id] === undefined) {
+function findMatches (puzzle, id) {
+    var idValue = puzzle.values[id];
+    if (idValue === undefined) {
         return [];
     }
 
-    if (!Puzzle.matchable(values[id])) {
+    if (!Puzzle.matchable(idValue)) {
         return [];
     }
 
-    var traversals = getTraversal(paths, values, id);
+    var traversals = getTraversal(puzzle, id);
     if (traversals.length >= 3) {
         return traversals;
     } else {

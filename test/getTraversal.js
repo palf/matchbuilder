@@ -9,10 +9,11 @@ function benchmark (func) {
     return { value: result, time: finish - start };
 }
 
-describe.only(".getTraversal(paths, values, id)", function () {
+describe(".getTraversal(puzzle, id)", function () {
     describe("with no paths", function () {
         it("returns only the requested ID", function () {
-            var result = getTraversal({}, {}, 'a');
+            var puzzle = {paths: {}, values: {} };
+            var result = getTraversal(puzzle, 'a');
             expect(result).to.contain('a');
             expect(result).to.have.length(1);
         });
@@ -20,7 +21,8 @@ describe.only(".getTraversal(paths, values, id)", function () {
 
     describe("with no values", function () {
         it("returns only the requested ID", function () {
-            var result = getTraversal({ a: [ 'b' ]}, {}, 'a');
+            var puzzle = { paths: { a: [ 'b' ]}, values: {} };
+            var result = getTraversal(puzzle, 'a');
             expect(result).to.contain('a');
             expect(result).to.have.length(1);
         });
@@ -36,14 +38,16 @@ describe.only(".getTraversal(paths, values, id)", function () {
         };
 
         it("returns the start and end of the path", function () {
-            var result = getTraversal(paths, values, 'a');
+            var puzzle = { paths: paths, values: values };
+            var result = getTraversal(puzzle, 'a');
             expect(result).to.contain('a');
             expect(result).to.contain('b');
             expect(result).to.have.length(2);
         });
 
         it("cannot backtrack along paths", function () {
-            var result = getTraversal(paths, values, 'b');
+            var puzzle = { paths: paths, values: values };
+            var result = getTraversal(puzzle, 'b');
             expect(result).to.contain('b');
             expect(result).to.have.length(1);
         });
@@ -52,7 +56,8 @@ describe.only(".getTraversal(paths, values, id)", function () {
             var paths = {
                 a: [ 'a' ]
             };
-            var result = getTraversal(paths, values, 'a');
+            var puzzle = { paths: paths, values: values };
+            var result = getTraversal(puzzle, 'a');
             expect(result).to.contain('a');
             expect(result).to.have.length(1);
         });
@@ -69,7 +74,8 @@ describe.only(".getTraversal(paths, values, id)", function () {
         };
 
         it("does not include the disconnected path in the traversable set", function () {
-            var result = getTraversal(paths, values, 'a');
+            var puzzle = { paths: paths, values: values };
+            var result = getTraversal(puzzle, 'a');
             expect(result).to.contain('a');
             expect(result).to.contain('b');
             expect(result).to.have.length(2);
@@ -87,7 +93,8 @@ describe.only(".getTraversal(paths, values, id)", function () {
         };
 
         it("traverses along the chain", function () {
-            var result = getTraversal(paths, values, 'a');
+            var puzzle = { paths: paths, values: values };
+            var result = getTraversal(puzzle, 'a');
             expect(result).to.contain('a');
             expect(result).to.contain('b');
             expect(result).to.contain('c');
@@ -102,7 +109,8 @@ describe.only(".getTraversal(paths, values, id)", function () {
                 d: [ 'e' ],
                 f: [ 'g' ]
             };
-            var result = getTraversal(paths, values, 'a');
+            var puzzle = { paths: paths, values: values };
+            var result = getTraversal(puzzle, 'a');
             expect(result).to.contain('a');
             expect(result).to.contain('b');
             expect(result).to.contain('c');
@@ -117,7 +125,8 @@ describe.only(".getTraversal(paths, values, id)", function () {
                 b: [ 'c' ],
                 c: [ 'a' ]
             };
-            var result = getTraversal(paths, values, 'a');
+            var puzzle = { paths: paths, values: values };
+            var result = getTraversal(puzzle, 'a');
             expect(result).to.contain('a');
             expect(result).to.contain('b');
             expect(result).to.contain('c');
@@ -129,7 +138,8 @@ describe.only(".getTraversal(paths, values, id)", function () {
                 b: [ 'c' ],
                 c: [ 'a' ]
             };
-            var result = getTraversal(paths, values, 'a');
+            var puzzle = { paths: paths, values: values };
+            var result = getTraversal(puzzle, 'a');
             expect(result).to.have.length(3);
         });
     });
@@ -144,7 +154,8 @@ describe.only(".getTraversal(paths, values, id)", function () {
         };
 
         it("returns all reachable cells", function () {
-            var result = getTraversal(paths, values, 'a');
+            var puzzle = { paths: paths, values: values };
+            var result = getTraversal(puzzle, 'a');
             var expectResultTo = expect(result).to;
             expectResultTo.contain('a');
             expectResultTo.contain('b');
@@ -166,7 +177,8 @@ describe.only(".getTraversal(paths, values, id)", function () {
         };
 
         it("traverses both types in tandem", function () {
-            var result = getTraversal(paths, values, 'a');
+            var puzzle = { paths: paths, values: values };
+            var result = getTraversal(puzzle, 'a');
             var expectResultTo = expect(result).to;
             expectResultTo.contain('a');
             expectResultTo.contain('b');
@@ -197,7 +209,8 @@ describe.only(".getTraversal(paths, values, id)", function () {
             };
 
             var result = benchmark(function () {
-                return getTraversal(paths, values, 'a');
+                var puzzle = { paths: paths, values: values };
+                return getTraversal(puzzle, 'a');
             });
 
             expect(result.time).to.be.lessThan(2);
@@ -221,7 +234,8 @@ describe.only(".getTraversal(paths, values, id)", function () {
             };
 
             var result = benchmark(function () {
-                return getTraversal(paths, values, '00');
+                var puzzle = { paths: paths, values: values };
+                return getTraversal(puzzle, '00');
             });
 
             expect(result.time).to.be.lessThan(2);
@@ -247,7 +261,8 @@ describe.only(".getTraversal(paths, values, id)", function () {
             };
 
             var result = benchmark(function () {
-                return getTraversal(paths, values, 'a');
+                var puzzle = { paths: paths, values: values };
+                return getTraversal(puzzle, 'a');
             });
 
             expect(result.time).to.be.lessThan(2);
@@ -274,7 +289,8 @@ describe.only(".getTraversal(paths, values, id)", function () {
             };
 
             var result = benchmark(function () {
-                return getTraversal(paths, values, 'a');
+                var puzzle = { paths: paths, values: values };
+                return getTraversal(puzzle, 'a');
             });
 
             expect(result.time).to.be.lessThan(2);

@@ -1,7 +1,8 @@
 var expect = require('expect.js');
 var _ = require('../server/public/libs/underscore.js');
 
-var findMatches = require('../src/findMatches').all;
+var findMatches = require('../src/findMatches');
+var buildPuzzleFrom = require('../src/puzzle').buildPuzzleFrom;
 
 function benchmark (label, func) {
     var start = Date.now();
@@ -10,93 +11,63 @@ function benchmark (label, func) {
     return { value: result, time: finish - start };
 }
 
-
-function puzzleOf (values) {
-    return _.chain(values).
-        map(function (row, yIndex) {
-            return _.map(row, function (value, xIndex) {
-                return {
-                    id: _.uniqueId('cell_'),
-                    x: xIndex,
-                    y: yIndex,
-                    value: value
-                };
-            });
-        }).
-        flatten().
-        value();
-}
-
-
 describe(".findMatches(puzzle)", function () {
-    var puzzle = puzzleOf([]);
+    var puzzle = buildPuzzleFrom([]);
 
     describe("when the puzzle is empty", function () {
         it("returns an empty array", function () {
-            var result = findMatches(puzzle);
+            var result = findMatches(puzzle, puzzle.ids[0]);
             expect(result).to.be.empty();
         });
     });
 
     describe("when the puzzle has no values", function () {
-        var puzzle = puzzleOf([
+        var puzzle = buildPuzzleFrom([
             [ 0, 0, 0 ],
             [ 0, 0, 0 ],
             [ 0, 0, 0 ]
         ]);
 
         it("returns no matches", function () {
-            var result = findMatches(puzzle);
+            var result = findMatches(puzzle, puzzle.ids[0]);
             expect(result).to.be.empty();
         });
     });
 
     describe("when the puzzle has a horizontal match", function () {
-        var puzzle = puzzleOf([
+        var puzzle = buildPuzzleFrom([
             [ 1, 1, 1 ],
             [ 0, 0, 0 ],
             [ 0, 0, 0 ]
         ]);
 
         it("returns an array of the matches", function () {
-            var result = findMatches(puzzle);
-            expect(result).to.have.length(1);
-        });
-
-        it("returns the matching elements as a set", function () {
-            var result = findMatches(puzzle);
-            var expectResultTo = expect(result[0]).to;
-            expectResultTo.contain(puzzle[0]);
-            expectResultTo.contain(puzzle[1]);
-            expectResultTo.contain(puzzle[2]);
-            expectResultTo.have.length(3);
+            var result = findMatches(puzzle, puzzle.ids[0]);
+            expect(result).to.contain(puzzle.ids[0]);
+            expect(result).to.contain(puzzle.ids[1]);
+            expect(result).to.contain(puzzle.ids[2]);
+            expect(result).to.have.length(3);
         });
     });
 
     describe("when the puzzle has a vertical match", function () {
-        var puzzle = puzzleOf([
+        var puzzle = buildPuzzleFrom([
             [ 1, 0, 0 ],
             [ 1, 0, 0 ],
             [ 1, 0, 0 ]
         ]);
 
         it("returns an array of the matches", function () {
-            var result = findMatches(puzzle);
-            expect(result).to.have.length(1);
-        });
-
-        it("returns the matching elements as a set", function () {
-            var result = findMatches(puzzle);
-            var expectResultTo = expect(result[0]).to;
-            expectResultTo.contain(puzzle[0]);
-            expectResultTo.contain(puzzle[3]);
-            expectResultTo.contain(puzzle[6]);
-            expectResultTo.have.length(3);
+            var result = findMatches(puzzle, puzzle.ids[0]);
+            expect(result).to.contain(puzzle.ids[0]);
+            expect(result).to.contain(puzzle.ids[3]);
+            expect(result).to.contain(puzzle.ids[6]);
+            expect(result).to.have.length(3);
         });
     });
 
     describe("when the puzzle has a long horizontal match", function () {
-        var puzzle = puzzleOf([
+        var puzzle = buildPuzzleFrom([
             [ 1, 1, 1, 1, 1 ],
             [ 0, 0, 0, 0, 0 ],
             [ 0, 0, 0, 0, 0 ],
@@ -105,24 +76,18 @@ describe(".findMatches(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = findMatches(puzzle);
-            expect(result).to.have.length(1);
-        });
-
-        it("returns the matching elements as a set", function () {
-            var result = findMatches(puzzle);
-            var expectResultTo = expect(result[0]).to;
-            expectResultTo.contain(puzzle[0]);
-            expectResultTo.contain(puzzle[1]);
-            expectResultTo.contain(puzzle[2]);
-            expectResultTo.contain(puzzle[3]);
-            expectResultTo.contain(puzzle[4]);
-            expectResultTo.have.length(5);
+            var result = findMatches(puzzle, puzzle.ids[0]);
+            expect(result).to.contain(puzzle.ids[0]);
+            expect(result).to.contain(puzzle.ids[1]);
+            expect(result).to.contain(puzzle.ids[2]);
+            expect(result).to.contain(puzzle.ids[3]);
+            expect(result).to.contain(puzzle.ids[4]);
+            expect(result).to.have.length(5);
         });
     });
 
     describe("when the puzzle has a long vertical match", function () {
-        var puzzle = puzzleOf([
+        var puzzle = buildPuzzleFrom([
             [ 1, 0, 0, 0, 0 ],
             [ 1, 0, 0, 0, 0 ],
             [ 1, 0, 0, 0, 0 ],
@@ -131,24 +96,18 @@ describe(".findMatches(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = findMatches(puzzle);
-            expect(result).to.have.length(1);
-        });
-
-        it("returns the matching elements as a set", function () {
-            var result = findMatches(puzzle);
-            var expectResultTo = expect(result[0]).to;
-            expectResultTo.contain(puzzle[0]);
-            expectResultTo.contain(puzzle[5]);
-            expectResultTo.contain(puzzle[10]);
-            expectResultTo.contain(puzzle[15]);
-            expectResultTo.contain(puzzle[20]);
-            expectResultTo.have.length(5);
+            var result = findMatches(puzzle, puzzle.ids[0]);
+            expect(result).to.contain(puzzle.ids[0]);
+            expect(result).to.contain(puzzle.ids[5]);
+            expect(result).to.contain(puzzle.ids[10]);
+            expect(result).to.contain(puzzle.ids[15]);
+            expect(result).to.contain(puzzle.ids[20]);
+            expect(result).to.have.length(5);
         });
     });
 
     describe("when the puzzle has a combination of linear matches", function () {
-        var puzzle = puzzleOf([
+        var puzzle = buildPuzzleFrom([
             [ 0, 0, 1, 0, 0 ],
             [ 0, 0, 1, 0, 0 ],
             [ 1, 1, 1, 1, 1 ],
@@ -157,28 +116,22 @@ describe(".findMatches(puzzle)", function () {
         ]);
 
         it("returns an array of the matches", function () {
-            var result = findMatches(puzzle);
-            expect(result).to.have.length(1);
-        });
-
-        it("returns the matching elements as a set", function () {
-            var result = findMatches(puzzle);
-            var expectResultTo = expect(result[0]).to;
-            expectResultTo.contain(puzzle[2]);
-            expectResultTo.contain(puzzle[7]);
-            expectResultTo.contain(puzzle[10]);
-            expectResultTo.contain(puzzle[11]);
-            expectResultTo.contain(puzzle[12]);
-            expectResultTo.contain(puzzle[13]);
-            expectResultTo.contain(puzzle[14]);
-            expectResultTo.contain(puzzle[17]);
-            expectResultTo.contain(puzzle[22]);
-            expectResultTo.have.length(9);
+            var result = findMatches(puzzle, puzzle.ids[2]);
+            expect(result).to.contain(puzzle.ids[2]);
+            expect(result).to.contain(puzzle.ids[7]);
+            expect(result).to.contain(puzzle.ids[10]);
+            expect(result).to.contain(puzzle.ids[11]);
+            expect(result).to.contain(puzzle.ids[12]);
+            expect(result).to.contain(puzzle.ids[13]);
+            expect(result).to.contain(puzzle.ids[14]);
+            expect(result).to.contain(puzzle.ids[17]);
+            expect(result).to.contain(puzzle.ids[22]);
+            expect(result).to.have.length(9);
         });
     });
 
     describe("when the puzzle has multiple groups of matches", function () {
-        var puzzle = puzzleOf([
+        var puzzle = buildPuzzleFrom([
             [ 1, 0, 1, 1, 1, 1 ],
             [ 0, 0, 0, 0, 0, 0 ],
             [ 1, 1, 0, 1, 1, 0 ],
@@ -187,46 +140,46 @@ describe(".findMatches(puzzle)", function () {
             [ 0, 0, 1, 0, 0, 1 ]
         ]);
 
-        it("returns an array of the matches", function () {
-            var result = findMatches(puzzle);
+        it("returns the matching elements as a set", function () {
+            var result = findMatches(puzzle, puzzle.ids[4]);
+            expect(result).to.contain(puzzle.ids[2]);
+            expect(result).to.contain(puzzle.ids[3]);
+            expect(result).to.contain(puzzle.ids[4]);
+            expect(result).to.contain(puzzle.ids[5]);
             expect(result).to.have.length(4);
         });
 
         it("returns the matching elements as a set", function () {
-            var result = findMatches(puzzle);
-            var firstResultShould = expect(result[0]).to;
-            firstResultShould.contain(puzzle[2]);
-            firstResultShould.contain(puzzle[3]);
-            firstResultShould.contain(puzzle[4]);
-            firstResultShould.contain(puzzle[5]);
-            firstResultShould.have.length(4);
+            var result = findMatches(puzzle, puzzle.ids[13]);
+            expect(result).to.contain(puzzle.ids[12]);
+            expect(result).to.contain(puzzle.ids[13]);
+            expect(result).to.contain(puzzle.ids[18]);
+            expect(result).to.contain(puzzle.ids[19]);
+            expect(result).to.contain(puzzle.ids[24]);
+            expect(result).to.contain(puzzle.ids[25]);
+            expect(result).to.have.length(6);
+        });
 
-            var secondResultShould = expect(result[1]).to;
-            secondResultShould.contain(puzzle[12]);
-            secondResultShould.contain(puzzle[13]);
-            secondResultShould.contain(puzzle[18]);
-            secondResultShould.contain(puzzle[19]);
-            secondResultShould.contain(puzzle[24]);
-            secondResultShould.contain(puzzle[25]);
-            secondResultShould.have.length(6);
+        it("returns the matching elements as a set", function () {
+            var result = findMatches(puzzle, puzzle.ids[15]);
+            expect(result).to.contain(puzzle.ids[15]);
+            expect(result).to.contain(puzzle.ids[16]);
+            expect(result).to.contain(puzzle.ids[21]);
+            expect(result).to.have.length(3);
+        });
 
-            var thirdResultShould = expect(result[2]).to;
-            thirdResultShould.contain(puzzle[15]);
-            thirdResultShould.contain(puzzle[16]);
-            thirdResultShould.contain(puzzle[21]);
-            thirdResultShould.have.length(3);
-
-            var fourthResultShould = expect(result[3]).to;
-            fourthResultShould.contain(puzzle[23]);
-            fourthResultShould.contain(puzzle[28]);
-            fourthResultShould.contain(puzzle[29]);
-            fourthResultShould.contain(puzzle[35]);
-            fourthResultShould.have.length(4);
+        it("returns the matching elements as a set", function () {
+            var result = findMatches(puzzle, puzzle.ids[29]);
+            expect(result).to.contain(puzzle.ids[23]);
+            expect(result).to.contain(puzzle.ids[28]);
+            expect(result).to.contain(puzzle.ids[29]);
+            expect(result).to.contain(puzzle.ids[35]);
+            expect(result).to.have.length(4);
         });
     });
 
-    describe("timing", function () {
-        var puzzle = puzzleOf([
+    describe("performance", function () {
+        var puzzle = buildPuzzleFrom([
             [ 1, 1, 0, 1, 1, 0, 1, 0 ],
             [ 1, 1, 0, 1, 1, 0, 0, 1 ],
             [ 0, 0, 0, 0, 0, 0, 0, 1 ],
@@ -239,12 +192,12 @@ describe(".findMatches(puzzle)", function () {
 
         it("returns a result within a frame", function () {
             var result = benchmark('findMatches', function () {
-                findMatches(puzzle);
+                findMatches(puzzle, puzzle.ids[0]);
             });
-            expect(result.time).to.be.lessThan(16);
+            expect(result.time).to.be.lessThan(2);
         });
 
-        var puzzle2 = puzzleOf([
+        var puzzle2 = buildPuzzleFrom([
             [ 1, 1, 1, 1, 1, 1, 1, 0 ],
             [ 1, 1, 1, 1, 1, 0, 1, 1 ],
             [ 1, 1, 1, 1, 0, 0, 0, 1 ]
@@ -254,12 +207,10 @@ describe(".findMatches(puzzle)", function () {
             var result = benchmark('findMatches', function () {
                 findMatches(puzzle2);
             });
-            expect(result.time).to.be.lessThan(16);
+            expect(result.time).to.be.lessThan(2);
         });
-    });
 
-    describe("timing", function () {
-        var puzzle = puzzleOf([
+        var puzzle3 = buildPuzzleFrom([
             [ 1, 1, 2, 0, 0, 0, 0, 0 ],
             [ 4, 1, 2, 0, 0, 0, 0, 0 ],
             [ 4, 3, 3, 0, 0, 0, 0, 0 ],
@@ -272,9 +223,9 @@ describe(".findMatches(puzzle)", function () {
 
         it("returns a result within a frame", function () {
             var result = benchmark('findMatches', function () {
-                findMatches(puzzle);
+                findMatches(puzzle3, puzzle.ids[0]);
             });
-            expect(result.time).to.be.lessThan(16);
+            expect(result.time).to.be.lessThan(2);
         });
     });
 });

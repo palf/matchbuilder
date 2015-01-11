@@ -1,6 +1,6 @@
 var _ = require('../server/public/libs/underscore.js');
 
-var render = require('./render');
+var requestRender = require('./render');
 var actions = require('./actions');
 
 
@@ -34,9 +34,11 @@ function bindInput (puzzle) {
             mark(index);
             actions.promoteAndMatch(puzzle, id);
             recall();
-            render(elementMapping, puzzle.values);
+            requestRender(elementMapping, puzzle.values);
         });
     });
+
+    requestRender(elementMapping, puzzle.values);
 }
 
 module.exports = bindInput;

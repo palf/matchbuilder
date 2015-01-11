@@ -15,14 +15,14 @@ function updateMatchedCells (values, matches, id) {
 
 function promoteAndMatch (puzzle, id) {
     Puzzle.promote(puzzle.values, id);
-    var matches = findMatches(puzzle.paths, puzzle.values, id);
+    var matches = findMatches(puzzle, id);
     // console.log('matches', matches);
 
     var limit = 10;
     while (matches.length > 0 && limit > 0) {
         limit --;
         updateMatchedCells(puzzle.values, matches, id);
-        matches = findMatches(puzzle.paths, puzzle.values, id);
+        matches = findMatches(puzzle, id);
     }
     return puzzle;
 }

@@ -70,6 +70,41 @@ function getNeighbours (ids, columns, rows, id) {
     });
 }
 
+function buildPuzzleFrom (input) {
+    var values = {};
+    var ids = _.map(_.flatten(input), function (inputValue) {
+        var id = _.uniqueId('cell_');
+        values[id] = inputValue;
+        return id;
+    });
+
+    var columns = {};
+    var rows = {};
+
+    var count = 0;
+    _.each(input, function (inputRow, rowIndex) {
+        _.each(inputRow, function (inputValue, columnIndex) {
+            var id = ids[count];
+
+            columns[id] = columnIndex;
+            rows[id] = rowIndex;
+            count ++;
+        });
+    })
+
+    var paths = {};
+    _.each(ids, function (id) {
+        paths[id] = getNeighbours(ids, columns, rows, id);
+    });
+
+    return {
+        ids: ids,
+        values: values,
+        paths: paths
+    };
+}
+
+
 function newPuzzle () {
     var ids = _.times(36, function () {
         return _.uniqueId('cell_');
@@ -81,12 +116,9 @@ function newPuzzle () {
     });
 
     var columns = {};
-    _.each(ids, function (id, index) {
-        columns[id] = index % 6;
-    });
-
     var rows = {};
     _.each(ids, function (id, index) {
+        columns[id] = index % 6;
         rows[id] = Math.floor(index / 6);
     });
 
@@ -125,6 +157,7 @@ function promote (values, id) {
 
 module.exports = {
     newPuzzle: newPuzzle,
+    buildPuzzleFrom: buildPuzzleFrom,
     increase: increase,
     reset: reset,
     matchable: matchable,

@@ -1,14 +1,14 @@
 var _ = require('../server/public/libs/underscore.js');
 
-function getMatchingNeighbours (paths, values, id) {
-    var allNeighbours = paths[id];
-    var targetValue = values[id];
+function getMatchingNeighbours (puzzle, id) {
+    var allNeighbours = puzzle.paths[id];
+    var targetValue = puzzle.values[id];
     return _.filter(allNeighbours, function (neighbour) {
-        return values[neighbour] === targetValue;
+        return puzzle.values[neighbour] === targetValue;
     });
 }
 
-function getTraversalDeep (paths, values, visited, pending) {
+function getTraversalDeep (puzzle, visited, pending) {
     if (_.isEmpty(pending)) {
         return visited;
     }
@@ -19,21 +19,21 @@ function getTraversalDeep (paths, values, visited, pending) {
         return visited;
     }
 
-    var neighbours = getMatchingNeighbours(paths, values, next);
+    var neighbours = getMatchingNeighbours(puzzle, next);
 
     var newVisited = visited.concat(next);
     var misc = _.union(pending, neighbours);
     var newPending = _.difference(misc, newVisited);
 
-    return getTraversalDeep(paths, values, newVisited, newPending);
+    return getTraversalDeep(puzzle, newVisited, newPending);
 }
 
-function getTraversal (paths, values, id) {
-    if (!_.has(values, id)) {
+function getTraversal (puzzle, id) {
+    if (!_.has(puzzle.values, id)) {
         return [ id ];
     }
-    var neighbours = getMatchingNeighbours(paths, values, id);
-    return getTraversalDeep(paths, values, [ id ], neighbours );
+    var neighbours = getMatchingNeighbours(puzzle, id);
+    return getTraversalDeep(puzzle, [ id ], neighbours );
 }
 
 module.exports = getTraversal;
