@@ -17,7 +17,7 @@ a {
     color: #00B7FF;
 }
 
-.container {
+.page {
     width: 500px;
     margin: 0 auto;
 }
@@ -26,28 +26,27 @@ a {
     padding: 15px;
     background: #bbada0;
     border-radius: 6px;
-    width: 500px;
-    height: 500px;
+    width: 464px;
+    height: 464px;
 }
 
-.grid {
-    position: absolute;
-    z-index: 1;
+#board {
+    margin-bottom: 0;
 }
 
 .row {
-    margin-top: 15px;
-    margin-left: 15px;
+    margin-top: 10px;
+    margin-left: 10px;
 }
 
 .row:last-child {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .cell {
     width: 60px;
     height: 60px;
-    margin-right: 15px;
+    margin-right: 10px;
     float: left;
     border-radius: 3px;
     background: rgb(238, 228, 218);
@@ -60,7 +59,7 @@ a {
 
 .tile {
     position: relative;
-    line-height: 58px;
+    line-height: 60px;
     margin: auto;
     border-radius: 3px;
     background: #eee4da;
@@ -69,4 +68,48 @@ a {
     cursor: pointer;
     z-index: 10;
     font-size: 24px;
+    transition: background-color 0.5s ease, color 0.5s ease;
 }
+
+.value_0 { }
+
+.value_1 {
+    background: #ede0c8;
+}
+
+.value_2 {
+    background: #f2b179;
+}
+
+.value_4 {
+    color: #f9f6f2;
+    background: #f59563;
+}
+
+.value_8 {
+    color: #f9f6f2;
+    background: #f67c5f;
+}
+
+.value_16 {
+    color: #f9f6f2;
+    background: #f65e3b;
+}
+
+
+/*
+color: #f9f6f2;
+
+    background: #eee4da;
+    background: #ede0c8;
+    background: #f2b179;
+    background: #f59563;
+    background: #f67c5f;
+    background: #f65e3b;
+    background: #edcf72;
+    background: #edcc61;
+    background: #edc850;
+    background: #edc53f;
+    background: #edc22e;
+    background: #3c3a32;
+*/

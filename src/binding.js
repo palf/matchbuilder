@@ -3,22 +3,6 @@ var _ = require('../server/public/libs/underscore.js');
 var requestRender = require('./render');
 var actions = require('./actions');
 
-
-var store;
-
-function mark (label) {
-    store = {
-        name: label,
-        time: Date.now()
-    };
-}
-
-function recall () {
-    var diff = Date.now() - store.time;
-    // console.log(store.name);
-    $('#log').html(diff + 'ms');
-}
-
 function bindInput (puzzle) {
     var elements = $('.tile');
     // var board = document.getElementById('board');
@@ -30,10 +14,10 @@ function bindInput (puzzle) {
         elementMapping[id] = element;
 
         var hammer = new Hammer(element);
-        hammer.on('tap', function () {
-            mark(index);
+        hammer.on('tap', function (ev) {
+            ev.preventDefault();
+            console.log(ev)
             actions.promoteAndMatch(puzzle, id);
-            recall();
             requestRender(elementMapping, puzzle.values);
         });
     });
