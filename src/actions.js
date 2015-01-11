@@ -1,35 +1,36 @@
 var _ = require('../server/public/libs/underscore.js');
 var Puzzle = require('./puzzle');
-var findMatches = require('./findMatches').byIndex;
+var findMatches = require('./findMatches');
 
-function updateMatchedCells (matches, origin) {
-    _.each(matches, function (match) {
-        _.each(match, function (matchCell) {
-            if (matchCell === origin) {
-                Puzzle.increase(matchCell);
-            } else {
-                Puzzle.reset(matchCell);
-            }
-        });
+function updateMatchedCells (values, matches, id) {
+    _.each(matches, function (matchID) {
+        if (matchID === id) {
+            Puzzle.increase(values, matchID);
+        } else {
+            Puzzle.reset(values, matchID);
+        }
     });
+    return values;
 }
 
-function promoteAndMatch (puzzle, index) {
-    var cell = puzzle[index];
-    var updated = Puzzle.promote(cell);
-    if (updated) {
-        var matches = findMatches(puzzle, index);
-        while (!_.isEmpty(matches)) {
-            updateMatchedCells(matches, cell);
-            matches = findMatches(puzzle, index);
-        }
+function promoteAndMatch (puzzle, id) {
+    Puzzle.promote(puzzle.values, id);
+    var matches = findMatches(puzzle.paths, puzzle.values, id);
+    // console.log('matches', matches);
+
+    var limit = 10;
+    while (matches.length > 0 && limit > 0) {
+        limit --;
+        updateMatchedCells(puzzle.values, matches, id);
+        matches = findMatches(puzzle.paths, puzzle.values, id);
     }
-    return updated;
+    return puzzle;
 }
 
 function setCell(puzzle, index, value) {
-    var cell = puzzle[index];
-    cell.value = value;
+    var id = puzzle.ids[index];
+    puzzle.values[id] = value;
+    return puzzle;
 }
 
 

@@ -1,6 +1,6 @@
 var expect = require('expect.js');
 
-var getTraversal = require('../../src/findMatches/getTraversal');
+var getTraversal = require('../src/getTraversal');
 
 function benchmark (func) {
     var start = Date.now();
@@ -9,80 +9,100 @@ function benchmark (func) {
     return { value: result, time: finish - start };
 }
 
-describe(".getTraversal(edgeGroups, cellID)", function () {
-    describe("with no edges", function () {
-        it("returns only the requested cell ID", function () {
-            var result = getTraversal({}, 'a');
+describe.only(".getTraversal(paths, values, id)", function () {
+    describe("with no paths", function () {
+        it("returns only the requested ID", function () {
+            var result = getTraversal({}, {}, 'a');
             expect(result).to.contain('a');
             expect(result).to.have.length(1);
         });
     });
 
-    describe("with one edge", function () {
-        it("returns a list of reachable cells from a given id", function () {
-            var edges = {
-                a: [ 'b' ]
-            };
-            var result = getTraversal(edges, 'a');
+    describe("with no values", function () {
+        it("returns only the requested ID", function () {
+            var result = getTraversal({ a: [ 'b' ]}, {}, 'a');
+            expect(result).to.contain('a');
+            expect(result).to.have.length(1);
+        });
+    });
+
+    describe("when there is one path with matching values", function () {
+        var paths = {
+            a: [ 'b' ]
+        };
+
+        var values = {
+            a: 1, b: 1
+        };
+
+        it("returns the start and end of the path", function () {
+            var result = getTraversal(paths, values, 'a');
             expect(result).to.contain('a');
             expect(result).to.contain('b');
             expect(result).to.have.length(2);
         });
 
-        it("cannot backtrack along edges", function () {
-            var edges = {
-                a: [ 'b' ]
-            };
-            var result = getTraversal(edges, 'b');
+        it("cannot backtrack along paths", function () {
+            var result = getTraversal(paths, values, 'b');
             expect(result).to.contain('b');
             expect(result).to.have.length(1);
         });
 
         it("cannot match with itself", function () {
-            var edges = {
+            var paths = {
                 a: [ 'a' ]
             };
-            var result = getTraversal(edges, 'a');
+            var result = getTraversal(paths, values, 'a');
             expect(result).to.contain('a');
             expect(result).to.have.length(1);
         });
     });
 
-    describe("with two disconnected edges", function () {
-        it("does not include the disconnected edge in the traversable set", function () {
-            var edges = {
-                a: [ 'b' ],
-                c: [ 'd' ]
-            };
-            var result = getTraversal(edges, 'a');
+    describe("with two disconnected paths", function () {
+        var paths = {
+            a: [ 'b' ],
+            c: [ 'd' ]
+        };
+
+        var values = {
+            a: 1, b: 1, c: 1, d: 1
+        };
+
+        it("does not include the disconnected path in the traversable set", function () {
+            var result = getTraversal(paths, values, 'a');
             expect(result).to.contain('a');
             expect(result).to.contain('b');
             expect(result).to.have.length(2);
         });
     });
 
-    describe("with a chain of connected edges", function () {
+    describe("with a chain of connected paths", function () {
+        var paths = {
+            a: [ 'b' ],
+            b: [ 'c' ]
+        };
+
+        var values = {
+            a: 1, b: 1, c: 1, d: 1, e: 1, f: 1, g: 1
+        };
+
         it("traverses along the chain", function () {
-            var edges = {
-                a: [ 'b' ],
-                b: [ 'c' ]
-            };
-            var result = getTraversal(edges, 'a');
+            var result = getTraversal(paths, values, 'a');
             expect(result).to.contain('a');
             expect(result).to.contain('b');
             expect(result).to.contain('c');
             expect(result).to.have.length(3);
         });
 
-        it("traverses until all edges are exhausted", function () {
-            var edges = {
+        it("traverses until all paths are exhausted", function () {
+            var paths = {
                 a: [ 'b' ],
                 b: [ 'c' ],
                 c: [ 'd' ],
                 d: [ 'e' ],
                 f: [ 'g' ]
             };
-            var result = getTraversal(edges, 'a');
+            var result = getTraversal(paths, values, 'a');
             expect(result).to.contain('a');
             expect(result).to.contain('b');
             expect(result).to.contain('c');
@@ -92,34 +112,39 @@ describe(".getTraversal(edgeGroups, cellID)", function () {
         });
 
         it("does not get caught in a loop", function () {
-            var edges = {
+            var paths = {
                 a: [ 'b' ],
                 b: [ 'c' ],
                 c: [ 'a' ]
             };
-            var result = getTraversal(edges, 'a');
+            var result = getTraversal(paths, values, 'a');
             expect(result).to.contain('a');
             expect(result).to.contain('b');
             expect(result).to.contain('c');
         });
 
         it("only returns each entry once", function () {
-            var edges = {
+            var paths = {
                 a: [ 'b' ],
                 b: [ 'c' ],
                 c: [ 'a' ]
             };
-            var result = getTraversal(edges, 'a');
+            var result = getTraversal(paths, values, 'a');
             expect(result).to.have.length(3);
         });
     });
 
-    describe("with connected edges from a common root", function () {
+    describe("with connected paths from a common root", function () {
+        var paths = {
+            a: [ 'b', 'c', 'd' ]
+        };
+
+        var values = {
+            a: 1, b: 1, c: 1, d:1
+        };
+
         it("returns all reachable cells", function () {
-            var edges = {
-                a: [ 'b', 'c', 'd' ]
-            };
-            var result = getTraversal(edges, 'a');
+            var result = getTraversal(paths, values, 'a');
             var expectResultTo = expect(result).to;
             expectResultTo.contain('a');
             expectResultTo.contain('b');
@@ -130,13 +155,18 @@ describe(".getTraversal(edgeGroups, cellID)", function () {
     });
 
     describe("with a combination of connection types", function () {
+        var paths = {
+            a: [ 'b', 'c', 'd' ],
+            b: [ 'a', 'e', 'd' ],
+            e: [ 'f' ]
+        };
+
+        var values = {
+            a: 1, b: 1, c: 1, d: 1, e: 1, f: 1
+        };
+
         it("traverses both types in tandem", function () {
-            var edges = {
-                a: [ 'b', 'c', 'd' ],
-                b: [ 'a', 'e', 'd' ],
-                e: [ 'f' ]
-            };
-            var result = getTraversal(edges, 'a');
+            var result = getTraversal(paths, values, 'a');
             var expectResultTo = expect(result).to;
             expectResultTo.contain('a');
             expectResultTo.contain('b');
@@ -150,7 +180,7 @@ describe(".getTraversal(edgeGroups, cellID)", function () {
 
     describe("performance", function () {
         it("completes a large grid in a under a millisecond", function () {
-            var edges = {
+            var paths = {
                 a: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
                 b: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
                 c: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
@@ -161,15 +191,44 @@ describe(".getTraversal(edgeGroups, cellID)", function () {
                 h: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
                 i: [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i' ],
             };
+
+            var values = {
+                a: 1, b: 1, c: 1, d: 1, e: 1, f: 1, g: 1, h: 1, i: 1
+            };
+
             var result = benchmark(function () {
-                return getTraversal(edges, 'a');
+                return getTraversal(paths, values, 'a');
             });
 
             expect(result.time).to.be.lessThan(2);
         });
 
-        it("completes a long chain in under a millisecond", function () {
-            var edges = {
+        it("completes a square grid in a under a millisecond", function () {
+            var paths = {
+                '00': [ '01', '10' ],
+                '01': [ '00', '02', '11' ],
+                '02': [ '01', '12' ],
+                '10': [ '00', '11', '20' ],
+                '11': [ '01', '10', '12', '21' ],
+                '12': [ '02', '11', '22' ],
+                '20': [ '10', '21' ],
+                '21': [ '11', '20', '22' ],
+                '22': [ '12', '21' ]
+            };
+
+            var values = {
+                '00': 1, '01': 1, '02': 1, '10': 1, '11': 1, '12': 1, '20': 1, '21': 1, '22': 1
+            };
+
+            var result = benchmark(function () {
+                return getTraversal(paths, values, '00');
+            });
+
+            expect(result.time).to.be.lessThan(2);
+        });
+
+        it("completes a long chain in about a millisecond", function () {
+            var paths = {
                 a: [ 'b' ],
                 b: [ 'c' ],
                 c: [ 'd' ],
@@ -182,15 +241,20 @@ describe(".getTraversal(edgeGroups, cellID)", function () {
                 j: [ 'k' ],
                 k: [ 'a' ],
             };
+
+            var values = {
+                a: 1, b: 1, c: 1, d: 1, e: 1, f: 1, g: 1, h: 1, i: 1, j: 1, k: 1
+            };
+
             var result = benchmark(function () {
-                return getTraversal(edges, 'a');
+                return getTraversal(paths, values, 'a');
             });
 
             expect(result.time).to.be.lessThan(2);
         });
 
-        it("completes a combination in under a millisecond", function () {
-            var edges = {
+        it("completes a combination in about a millisecond", function () {
+            var paths = {
                 a: [ 'b', 'c' ],
                 b: [ 'c' ],
                 c: [ 'd', 'b' ],
@@ -204,8 +268,13 @@ describe(".getTraversal(edgeGroups, cellID)", function () {
                 k: [ 'a' ],
                 l: [ 'l' ]
             };
+
+            var values = {
+                a: 1, b: 1, c: 1, d: 1, e: 1, f: 1, g: 1, h: 1, i: 1, j: 1, k: 1, l: 1
+            };
+
             var result = benchmark(function () {
-                return getTraversal(edges, 'a');
+                return getTraversal(paths, values, 'a');
             });
 
             expect(result.time).to.be.lessThan(2);

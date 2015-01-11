@@ -1,11 +1,16 @@
 var _ = require('../server/public/libs/underscore.js');
 
-function render (puzzle) {
-    var elements = $('.tile');
-    _.each(puzzle, function (cell, index) {
-        var element = elements[index];
-        $(element).html(cell.value);
+function renderValues (elementMap, values) {
+    _.each(elementMap, function (element, index) {
+        var value = values[index];
+        $(element).html(value);
     });
 }
 
-module.exports = render;
+function requestRender (elementMap, values) {
+    requestAnimationFrame(function () {
+        renderValues(elementMap, values);
+    });
+}
+
+module.exports = requestRender;

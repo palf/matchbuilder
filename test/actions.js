@@ -252,14 +252,12 @@ describe(".promoteAndMatch(puzzle, index)", function () {
 
         it("returns a result within a frame", function () {
             var result = benchmark('promote & match', function () {
-                actions.promoteAndMatch(puzzle, 0);
+                actions.promoteAndMatch(puzzle2, 0);
             });
             expect(result.time).to.be.lessThan(16);
         });
-    });
 
-    describe.only("timing", function () {
-        var puzzle = puzzleOf([
+        var puzzle3 = puzzleOf([
             [ 1, 1, 2, 0, 0, 0, 0, 0 ],
             [ 4, 0, 2, 0, 0, 0, 0, 0 ],
             [ 4, 3, 3, 0, 0, 0, 0, 0 ],
@@ -272,7 +270,7 @@ describe(".promoteAndMatch(puzzle, index)", function () {
 
         it("returns a result within a frame", function () {
             var result = benchmark('promote & match', function () {
-                return actions.promoteAndMatch(puzzle, 9);
+                return actions.promoteAndMatch(puzzle3, 9);
             });
             expect(result).to.be.lessThan(16);
             expect(result.time).to.be.lessThan(1);

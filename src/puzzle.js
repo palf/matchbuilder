@@ -41,47 +41,93 @@ function succ (value) {
     }
 }
 
-function Cell (x, y) {
-    this.id = _.uniqueId('cell_');
-    this.x = x;
-    this.y = y;
-    this.value = NONE;
+
+
+
+function adjacent (set, origin, target) {
+    return set[target] === set[origin] - 1 ||
+        set[target] === set[origin] + 1;
+}
+
+function same (set, origin, target) {
+    return set[target] === set[origin];
+}
+
+function isHorizontalNeighbour (columns, rows, origin, target) {
+    return adjacent(columns, origin, target) &&
+        same(rows, origin, target);
+}
+
+function isVerticalNeighbour (columns, rows, origin, target) {
+    return same(columns, origin, target) &&
+        adjacent(rows, origin, target);
+}
+
+function getNeighbours (ids, columns, rows, id) {
+    return _.filter(ids, function (target) {
+        return isHorizontalNeighbour(columns, rows, id, target) ||
+            isVerticalNeighbour(columns, rows, id, target);
+    });
 }
 
 function newPuzzle () {
-    return _.flatten(_.times(6, function (y) {
-        return _.times(6, function (x) {
-            return new Cell(x, y);
-        });
-    }));
+    var ids = _.times(36, function () {
+        return _.uniqueId('cell_');
+    });
+
+    var values = {};
+    _.each(ids, function (id) {
+        values[id] = NONE;
+    });
+
+    var columns = {};
+    _.each(ids, function (id, index) {
+        columns[id] = index % 6;
+    });
+
+    var rows = {};
+    _.each(ids, function (id, index) {
+        rows[id] = Math.floor(index / 6);
+    });
+
+    var paths = {};
+    _.each(ids, function (id) {
+        paths[id] = getNeighbours(ids, columns, rows, id);
+    });
+
+    return {
+        ids: ids,
+        values: values,
+        paths: paths
+    };
 }
 
-function increase (cell) {
-    cell.value = succ(cell.value);
+function increase (values, id) {
+    values[id] = succ(values[id]);
+    return values;
 }
 
-function reset (cell) {
-    cell.value = NONE;
+function reset (values, id) {
+    values[id] = NONE;
+    return values;
 }
 
-function isEmpty (cell) {
-    return cell.value === NONE;
+function matchable (value) {
+    return value !== NONE;
 }
 
-function promote (cell) {
-    if (cell.value === NONE) {
-        cell.value = ONE;
-        return true;
-    } else {
-        return false;
+function promote (values, id) {
+    if (values[id] === NONE) {
+        values[id] = ONE;
     }
+    return values;
 }
 
 module.exports = {
     newPuzzle: newPuzzle,
     increase: increase,
     reset: reset,
-    isEmpty: isEmpty,
+    matchable: matchable,
     promote: promote,
     pointsValueOf: pointsValueOf
 };
